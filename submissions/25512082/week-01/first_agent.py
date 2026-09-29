@@ -68,7 +68,8 @@ def write_note(path: str, content: str) -> str:
     return f"appended {len(text)} characters to {os.path.relpath(full)}"
 
 
-TOOLS_IMPL = {"calculator": calculator, "read_file": read_file}
+TOOLS_IMPL = {"calculator": calculator, "read_file": read_file,
+              "write_note": write_note}
 
 # ---- tool schemas handed to the model (the description IS the interface) ----
 TOOLS = [
@@ -86,6 +87,22 @@ TOOLS = [
          "parameters": {"type": "object",
                         "properties": {"path": {"type": "string"}},
                         "required": ["path"]}}},
+    {"type": "function",
+     "function": {
+         "name": "write_note",
+         "description": ("Append text to a .txt file under outputs/. Use only "
+                         "when the user explicitly asks to save or record a result."),
+         "parameters": {"type": "object",
+                        "properties": {
+                            "path": {
+                                "type": "string",
+                                "description": "File path relative to outputs/."
+                            },
+                            "content": {
+                                "type": "string",
+                                "description": "Non-empty text to append."
+                            }},
+                        "required": ["path", "content"]}}},
 ]
 
 MODEL = os.environ.get("AGENT_MODEL", "gpt-4o-mini")

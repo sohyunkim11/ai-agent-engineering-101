@@ -96,7 +96,8 @@ TOOLS = [
                         "properties": {
                             "path": {
                                 "type": "string",
-                                "description": "File path relative to outputs/."
+                                "description": (".txt file path relative to outputs/, "
+                                                "for example result.txt.")
                             },
                             "content": {
                                 "type": "string",

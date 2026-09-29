@@ -9,5 +9,5 @@ Set `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `AGENT_MODEL` in the shell without 
 From this directory, run:
 
 ```bash
-python first_agent.py "Read notes.txt, calculate the sum of all numbers, and save the result to outputs/result.txt."
+python first_agent.py "Read notes.txt, calculate the requested total, and save it with write_note using the path result.txt."
 ```

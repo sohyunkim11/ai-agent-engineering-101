@@ -46,6 +46,28 @@ def read_file(path: str) -> str:
         return f.read()[:4000]
 
 
+# ---- tool 3: append a note under outputs/ ----
+def write_note(path: str, content: str) -> str:
+    """Append non-empty text to a .txt file under the outputs directory."""
+    if not content.strip():
+        return "denied: content must not be empty"
+    if len(content) > 4000:
+        return "denied: content exceeds 4000 characters"
+
+    outputs_dir = os.path.abspath("outputs")
+    full = os.path.abspath(os.path.join(outputs_dir, path))
+    if os.path.commonpath((outputs_dir, full)) != outputs_dir:
+        return "denied: path outside the outputs directory"
+    if not full.endswith(".txt"):
+        return "denied: only .txt files are allowed"
+
+    os.makedirs(os.path.dirname(full), exist_ok=True)
+    text = content if content.endswith("\n") else content + "\n"
+    with open(full, "a", encoding="utf-8") as f:
+        f.write(text)
+    return f"appended {len(text)} characters to {os.path.relpath(full)}"
+
+
 TOOLS_IMPL = {"calculator": calculator, "read_file": read_file}
 
 # ---- tool schemas handed to the model (the description IS the interface) ----

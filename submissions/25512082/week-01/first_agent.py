@@ -46,18 +46,18 @@ def read_file(path: str) -> str:
         return f.read()[:4000]
 
 
-# ---- tool 3: append a note under outputs/ ----
+# ---- tool 3: append a note inside the working directory ----
 def write_note(path: str, content: str) -> str:
-    """Append non-empty text to a .txt file under the outputs directory."""
+    """Append non-empty text to a .txt file in the working directory."""
     if not content.strip():
         return "denied: content must not be empty"
     if len(content) > 4000:
         return "denied: content exceeds 4000 characters"
 
-    outputs_dir = os.path.abspath("outputs")
-    full = os.path.abspath(os.path.join(outputs_dir, path))
-    if os.path.commonpath((outputs_dir, full)) != outputs_dir:
-        return "denied: path outside the outputs directory"
+    working_dir = os.path.abspath(os.getcwd())
+    full = os.path.abspath(os.path.join(working_dir, path))
+    if os.path.commonpath((working_dir, full)) != working_dir:
+        return "denied: path outside the working directory"
     if not full.endswith(".txt"):
         return "denied: only .txt files are allowed"
 
@@ -90,13 +90,13 @@ TOOLS = [
     {"type": "function",
      "function": {
          "name": "write_note",
-         "description": ("Append text to a .txt file under outputs/. Use only "
+         "description": ("Append text to a .txt file in the working directory. Use only "
                          "when the user explicitly asks to save or record a result."),
          "parameters": {"type": "object",
                         "properties": {
                             "path": {
                                 "type": "string",
-                                "description": (".txt file path relative to outputs/, "
+                                "description": (".txt file path relative to the working directory, "
                                                 "for example result.txt.")
                             },
                             "content": {
@@ -112,10 +112,16 @@ MODEL = os.environ.get("AGENT_MODEL", "gpt-4o-mini")
 def run(goal: str, max_steps: int = 8):
     client = OpenAI()  # uses OPENAI_API_KEY and OPENAI_BASE_URL
     messages = [{"role": "user", "content": goal}]
+    toolset = os.environ.get("AGENT_TOOLSET", "extended")
+    if toolset not in {"baseline", "extended"}:
+        raise ValueError("AGENT_TOOLSET must be 'baseline' or 'extended'")
+    active_tools = TOOLS[:2] if toolset == "baseline" else TOOLS
+    print(f"[agent] model={MODEL} toolset={toolset}")
+    print(f"[agent] tools={[tool['function']['name'] for tool in active_tools]}")
 
     for step in range(max_steps):   # <- this loop is what makes it an agent
         resp = client.chat.completions.create(
-            model=MODEL, tools=TOOLS, messages=messages)
+            model=MODEL, tools=active_tools, messages=messages)
         msg = resp.choices[0].message
         messages.append(msg)
 

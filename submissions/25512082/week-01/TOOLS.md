@@ -5,6 +5,7 @@ I added `write_note` so the agent can persist a result after reading input and c
 ## Run
 
 Set `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `AGENT_MODEL` in the shell without writing their secret values to this repository. For OpenRouter, `OPENAI_BASE_URL` is `https://openrouter.ai/api/v1`.
+The successful submitted run used `AGENT_MODEL=nvidia/nemotron-3.5-lightning:free`.
 
 From this directory, run:
 

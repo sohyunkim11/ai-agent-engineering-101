@@ -1,0 +1,14 @@
+[agent] model=nvidia/nemotron-3.5-lightning:free toolset=extended
+[agent] tools=['calculator', 'read_file', 'write_note']
+  [tool] read_file({'path': 'notes.txt'}) -> Meeting memo, 2026-09-01
+
+Attendees: 4
+Pizza budget: 48000
+Drinks: 9500
+Reimbursed so far: 12000
+
+Sum the numbers above to get the total the agent should report.
+
+  [tool] calculator({'expression': '48000 + 9500 + 12000'}) -> 69500
+  [tool] write_note({'path': 'result.txt', 'content': '69500'}) -> appended 6 characters to result.txt
+The requested total (48000 + 9500 + 12000) is **69500**. I've saved this result to `result.txt`.
